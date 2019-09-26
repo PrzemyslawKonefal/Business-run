@@ -1,4 +1,14 @@
-# graphql-playlist
-All course files for the GraphQL tutorial playlist on The Net Ninja YouTube channel.
+# Business ideas
 
-Node modules are not included in the course files. After download, run npm install to install the modules (client and server folders)
+Monorepository for submitting, reviewing, commenting and categorising various business ideas.
+The skeleton of application took from the net ninja GraphQl tutorial
+
+**Backend:**
+- Node
+- GraphQl
+- MongoDB
+- Express
+
+**Frontend:**
+- React
+- Apollo
