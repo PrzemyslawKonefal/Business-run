@@ -11,10 +11,10 @@ app.use(cors());
 
 // connect to mlab database
 // make sure to replace my db string & creds with your own
-mongoose.connect('mongodb://ninja:test@ds161148.mlab.com:61148/graphql-ninja')
+mongoose.connect('mongodb+srv://przemek:Fa8a22aC!MON@gql-tutorial-e0o83.mongodb.net/test?retryWrites=true&w=majority\n', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connection.once('open', () => {
-    console.log('conneted to database');
-});
+  console.log('connected to database')
+})
 
 // bind express with graphql
 app.use('/graphql', graphqlHTTP({

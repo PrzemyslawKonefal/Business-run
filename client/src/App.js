@@ -1,26 +1,26 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import {ApolloProvider} from 'react-apollo';
+import {BrowserRouter, Route} from 'react-router-dom';
+import Books from "./views/Books";
+import LandingPage from "./views/LandingPage";
 
 // components
-import BookList from './components/BookList';
-import AddBook from './components/AddBook';
 
 // apollo client setup
 const client = new ApolloClient({
-    uri: 'http://localhost:4000/graphql'
+  uri: 'http://localhost:4000/graphql'
 });
 
 class App extends Component {
   render() {
     return (
+      <BrowserRouter>
         <ApolloProvider client={client}>
-            <div id="main">
-                <h1>Ninja's Reading List</h1>
-                <BookList />
-                <AddBook />
-            </div>
+          <Route exact path='/' component={LandingPage}/>
+          <Route exact path='/books' component={Books}/>
         </ApolloProvider>
+      </BrowserRouter>
     );
   }
 }

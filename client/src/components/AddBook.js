@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
+import lodash from 'lodash';
 import { getAuthorsQuery, addBookMutation, getBooksQuery } from '../queries/queries';
 
 class AddBook extends Component {
@@ -12,8 +13,8 @@ class AddBook extends Component {
         };
     }
     displayAuthors(){
-        var data = this.props.getAuthorsQuery;
-        if(data.loading){
+      const data = this.props.getAuthorsQuery;
+      if(data.loading){
             return( <option disabled>Loading authors</option> );
         } else {
             return data.authors.map(author => {
@@ -57,7 +58,7 @@ class AddBook extends Component {
     }
 }
 
-export default compose(
+export default lodash.flowRight(
     graphql(getAuthorsQuery, { name: "getAuthorsQuery" }),
     graphql(addBookMutation, { name: "addBookMutation" })
 )(AddBook);
