@@ -1,6 +1,8 @@
 const graphql = require('graphql');
+const moment = require('moment');
 const Book = require('../models/book');
 const Author = require('../models/Author');
+const Idea = require('../models/Idea');
 
 const {
     GraphQLObjectType,
@@ -9,7 +11,7 @@ const {
     GraphQLID,
     GraphQLInt,
     GraphQLList,
-    GraphQLNonNull
+    GraphQLNonNull,
 } = graphql;
 
 const BookType = new GraphQLObjectType({
@@ -42,6 +44,21 @@ const AuthorType = new GraphQLObjectType({
     })
 });
 
+const IdeaType = new GraphQLObjectType({
+    name: 'Idea',
+    fields: ( ) => ({
+        id: { type: GraphQLID },
+        title: { type: GraphQLString },
+        description: { type: GraphQLString },
+        authorId: { type: GraphQLID },
+        category: { type: GraphQLString },
+        comments: { type: new GraphQLList(GraphQLID) },
+        stars: { type: new GraphQLList(GraphQLID) },
+        creationDate: { type: GraphQLString },
+        lastUpdateDate: { type: GraphQLString },
+    })
+});
+
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -59,6 +76,13 @@ const RootQuery = new GraphQLObjectType({
                 return Author.findById(args.id);
             }
         },
+        idea: {
+          type: IdeaType,
+          args: { id: { type: GraphQLID } },
+          resolve(parent, args){
+              return Author.findById(args.id);
+          }
+        },
         books: {
             type: new GraphQLList(BookType),
             resolve(){
@@ -70,7 +94,16 @@ const RootQuery = new GraphQLObjectType({
             resolve(){
                 return Author.find({});
             }
-        }
+        },
+        ideas: {
+            type: new GraphQLList(IdeaType),
+            args: { category: { type: GraphQLString } },
+            resolve(parent, args){
+                const filters = {};
+                if( args.category ) filters.category = args.category;
+                return Idea.find(filters);
+            }
+        },
     }
 });
 
@@ -105,6 +138,30 @@ const Mutation = new GraphQLObjectType({
                     authorId: args.authorId
                 });
                 return book.save();
+            }
+        },
+        addIdea: {
+            type: IdeaType,
+            args: {
+                title: { type: new GraphQLNonNull(GraphQLString) },
+                description: { type: new GraphQLNonNull(GraphQLString) },
+                authorId: { type: new GraphQLNonNull(GraphQLID) },
+                category: { type: new GraphQLNonNull(GraphQLString) }
+            },
+            resolve(parent, args){
+                const timestamp = moment().format('YYYY-MM-DD, h:mm');
+                console.log(timestamp)
+                const idea = new Idea({
+                    title: args.title,
+                    description: args.description,
+                    authorId: args.authorId,
+                    category: args.category,
+                    comments: [],
+                    stars: [],
+                    creationDate: timestamp,
+                    lastUpdateDate: timestamp
+                });
+                return idea.save();
             }
         }
     }
