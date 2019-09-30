@@ -18,6 +18,36 @@ const getBooksQuery = gql`
     }
 `;
 
+const getPostsQuery = gql`
+    {
+        ideas {
+            id
+            title
+            description
+            category
+            author {
+                id
+                name
+                imgUrl
+            }
+            comments {
+                content
+                author {
+                    id
+                    name
+                    imgUrl
+                }
+            }
+            stars {
+                id
+                name
+            }
+            creationDate
+            lastUpdateDate
+        }
+    }
+`;
+
 const addBookMutation = gql`
     mutation AddBook($name: String!, $genre: String!, $authorId: ID!){
         addBook(name: $name, genre: $genre, authorId: $authorId){
@@ -46,4 +76,4 @@ const getBookQuery = gql`
     }
 `;
 
-export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery };
+export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery, getPostsQuery };

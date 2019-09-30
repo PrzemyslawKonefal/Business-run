@@ -46,15 +46,23 @@ const IdeaType = new GraphQLObjectType({
         id: { type: GraphQLID },
         title: { type: GraphQLString },
         description: { type: GraphQLString },
-        authorId: { type: GraphQLID },
         category: { type: GraphQLString },
+        authorId: { type: GraphQLID },
+        starsUserIds: { type: new GraphQLList(GraphQLID) },
+        creationDate: { type: GraphQLString },
+        lastUpdateDate: { type: GraphQLString },
+        author: {
+            type: AuthorType,
+            resolve(parent) {
+                return Author.findById(parent.authorId)
+            }
+        },
         comments: {
             type: new GraphQLList(CommentType),
             resolve(parent) {
                 return Comment.find({postId: parent.id})
             }
         },
-        starsUserIds: { type: new GraphQLList(GraphQLID) },
         stars: {
             type: new GraphQLList(AuthorType),
             resolve(parent) {
@@ -66,8 +74,6 @@ const IdeaType = new GraphQLObjectType({
                 })
             }
         },
-        creationDate: { type: GraphQLString },
-        lastUpdateDate: { type: GraphQLString },
     })
 });
 
