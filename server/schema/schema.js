@@ -1,8 +1,9 @@
 const graphql = require('graphql');
+const mongoose = require('mongoose');
 const moment = require('moment');
-const Book = require('../models/book');
 const Author = require('../models/Author');
 const Idea = require('../models/Idea');
+const Comment = require('../models/Comment');
 
 const {
     GraphQLObjectType,
@@ -14,31 +15,26 @@ const {
     GraphQLNonNull,
 } = graphql;
 
-const BookType = new GraphQLObjectType({
-    name: 'Book',
-    fields: ( ) => ({
-        id: { type: GraphQLID },
-        name: { type: GraphQLString },
-        genre: { type: GraphQLString },
-        author: {
-            type: AuthorType,
-            resolve(parent){
-                return Author.findById(parent.authorId);
-            }
-        }
-    })
-});
 
 const AuthorType = new GraphQLObjectType({
     name: 'Author',
     fields: ( ) => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
+        username: { type: GraphQLString },
         age: { type: GraphQLInt },
-        books: {
-            type: new GraphQLList(BookType),
-            resolve(parent){
-                return Book.find({ authorId: parent.id });
+        starredPostIds: { type: new GraphQLList(GraphQLString) },
+        imgUrl: { type: GraphQLString },
+        ideas: {
+            type: new GraphQLList(IdeaType),
+            resolve(parent) {
+                return Idea.find({authorId: parent.id})
+            }
+        },
+        comments: {
+            type: new GraphQLList(CommentType),
+            resolve(parent) {
+                return Comment.find({authorId: parent.id})
             }
         }
     })
@@ -52,23 +48,50 @@ const IdeaType = new GraphQLObjectType({
         description: { type: GraphQLString },
         authorId: { type: GraphQLID },
         category: { type: GraphQLString },
-        comments: { type: new GraphQLList(GraphQLID) },
-        stars: { type: new GraphQLList(GraphQLID) },
+        comments: {
+            type: new GraphQLList(CommentType),
+            resolve(parent) {
+                return Comment.find({postId: parent.id})
+            }
+        },
+        starsUserIds: { type: new GraphQLList(GraphQLID) },
+        stars: {
+            type: new GraphQLList(AuthorType),
+            resolve(parent) {
+                const idsList = parent.starsUserIds.map(id => mongoose.Types.ObjectId(id));
+                return Author.find({
+                    '_id': {
+                        $in: idsList
+                    }
+                })
+            }
+        },
         creationDate: { type: GraphQLString },
         lastUpdateDate: { type: GraphQLString },
+    })
+});
+
+const CommentType = new GraphQLObjectType({
+    name: 'Comment',
+    fields: ( ) => ({
+        id: { type: GraphQLID },
+        content: { type: GraphQLString },
+        authorId: { type: GraphQLID },
+        postId: { type: GraphQLID },
+        creationDate: { type: GraphQLString },
+        lastUpdateDate: { type: GraphQLString },
+        author: {
+            type: AuthorType,
+            resolve(parent){
+                return Author.findById(parent.authorId);
+            }
+        }
     })
 });
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        book: {
-            type: BookType,
-            args: { id: { type: GraphQLID } },
-            resolve(parent, args){
-                return Book.findById(args.id);
-            }
-        },
         author: {
             type: AuthorType,
             args: { id: { type: GraphQLID } },
@@ -80,14 +103,8 @@ const RootQuery = new GraphQLObjectType({
           type: IdeaType,
           args: { id: { type: GraphQLID } },
           resolve(parent, args){
-              return Author.findById(args.id);
+              return Idea.findById(args.id);
           }
-        },
-        books: {
-            type: new GraphQLList(BookType),
-            resolve(){
-                return Book.find({});
-            }
         },
         authors: {
             type: new GraphQLList(AuthorType),
@@ -100,7 +117,7 @@ const RootQuery = new GraphQLObjectType({
             args: { category: { type: GraphQLString } },
             resolve(parent, args){
                 const filters = {};
-                if( args.category ) filters.category = args.category;
+                if (args.category) filters.category = args.category;
                 return Idea.find(filters);
             }
         },
@@ -114,30 +131,19 @@ const Mutation = new GraphQLObjectType({
             type: AuthorType,
             args: {
                 name: { type: GraphQLString },
-                age: { type: GraphQLInt }
+                username: { type: GraphQLString },
+                age: { type: GraphQLInt },
+                imgUrl: { type: GraphQLString },
             },
             resolve(parent, args){
                 let author = new Author({
                     name: args.name,
-                    age: args.age
+                    username: args.username,
+                    age: args.age,
+                    imgUrl: args.age,
+                    starredPostIds: []
                 });
                 return author.save();
-            }
-        },
-        addBook: {
-            type: BookType,
-            args: {
-                name: { type: new GraphQLNonNull(GraphQLString) },
-                genre: { type: new GraphQLNonNull(GraphQLString) },
-                authorId: { type: new GraphQLNonNull(GraphQLID) }
-            },
-            resolve(parent, args){
-                let book = new Book({
-                    name: args.name,
-                    genre: args.genre,
-                    authorId: args.authorId
-                });
-                return book.save();
             }
         },
         addIdea: {
@@ -150,18 +156,53 @@ const Mutation = new GraphQLObjectType({
             },
             resolve(parent, args){
                 const timestamp = moment().format('YYYY-MM-DD, h:mm');
-                console.log(timestamp)
                 const idea = new Idea({
                     title: args.title,
                     description: args.description,
                     authorId: args.authorId,
                     category: args.category,
                     comments: [],
-                    stars: [],
+                    starsUserIds: [],
                     creationDate: timestamp,
                     lastUpdateDate: timestamp
                 });
                 return idea.save();
+            }
+        },
+        addComment: {
+            type: CommentType,
+            args: {
+                content: { type: GraphQLString },
+                authorId: { type: GraphQLID },
+                postId: { type: GraphQLID },
+                responseId: {type: GraphQLID },
+            },
+            resolve(parent, args){
+                const timestamp = moment().format('YYYY-MM-DD, h:mm');
+                const comment = new Comment({
+                    content: args.content,
+                    authorId: args.authorId,
+                    postId: args.postId,
+                    responseId: args.responseId,
+                    creationDate: timestamp,
+                    lastUpdateDate: timestamp
+                });
+                return comment.save();
+            }
+        },
+        toggleIdeaStar: {
+            type: IdeaType,
+            args: {
+                authorId: { type: new GraphQLNonNull(GraphQLID) },
+                ideaId: { type: new GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent, args) {
+                Idea.findById(args.ideaId).exec().then(({starsUserIds}) => {
+                    let starsList = starsUserIds.some(id => id === args.authorId)
+                        ? starsUserIds.filter(id => id !== args.authorId)
+                        : [ ...starsUserIds, args.authorId ];
+                    return Idea.findByIdAndUpdate(args.ideaId, { starsUserIds: starsList }, { useFindAndModify: false })
+                });
             }
         }
     }
