@@ -84,8 +84,10 @@ const CommentType = new GraphQLObjectType({
         content: { type: GraphQLString },
         authorId: { type: GraphQLID },
         postId: { type: GraphQLID },
+        responseId: { type: GraphQLID },
         creationDate: { type: GraphQLString },
         lastUpdateDate: { type: GraphQLString },
+        starsAuthorIds: {type: new GraphQLList(GraphQLString)},
         author: {
             type: AuthorType,
             resolve(parent){
@@ -190,6 +192,7 @@ const Mutation = new GraphQLObjectType({
                     authorId: args.authorId,
                     postId: args.postId,
                     responseId: args.responseId,
+                    starsAuthorIds: [],
                     creationDate: timestamp,
                     lastUpdateDate: timestamp
                 });

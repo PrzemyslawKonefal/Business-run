@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import { graphql } from 'react-apollo';
-import lodash from 'lodash'
+import lodash from 'lodash';
+import styled from 'styled-components';
 import {getPostsQuery} from '../queries/queries';
 
 import Post from './Post';
+
+const PostWrapper = styled.div`
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 0 1em;
+  @media screen and (max-width: 1210px) {
+    justify-content: space-between;
+  }
+`;
 
 const Posts  = (props) => {
     const displayPosts = () => {
@@ -19,11 +30,11 @@ const Posts  = (props) => {
         }
     }
   return(
-      <div>
-          <ul id="book-list">
+      <main>
+          <PostWrapper>
               { displayPosts() }
-          </ul>
-      </div>
+          </PostWrapper>
+      </main>
   );
 }
 

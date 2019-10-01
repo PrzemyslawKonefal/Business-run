@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import {Card, CardHeader, CardActions, Button, Avatar, Chip, IconButton} from '@material-ui/core'
+import {Card, CardHeader, CardActions, Collapse, Avatar, Chip, IconButton} from '@material-ui/core'
 import {NavLink} from 'react-router-dom';
 import Dotdotdot from 'react-dotdotdot'
 import {Favorite, Share, Comment} from '@material-ui/icons'
+import CommentsSection from './CommentsSection'
 
 const PostWrapper = styled(Card)`
   && {
     z-index: 5;
     position: relative;
     max-width: 375px;
-    margin-bottom: 1em;
+    margin: 0 1em 1em 0;
+    &:nth-of-type(3n) {
+      margin-right: 0;
+    }
+    @media screen and (max-width: 1210px) {
+      max-width: 380px;
+      &:nth-of-type(2n) {
+        margin-right: 0;
+      }
+      &:nth-of-type(3n) {
+        margin-right: 1em;
+      }
+    }
   }
   
 `;
@@ -21,20 +34,26 @@ const CategoryChip = styled(Chip)`
   z-index: -1;
   top: 0;
   right: 0;
-  border-radius: 0 0 0 16px;
   height: 20px;
+  border-radius: 0 0 0 16px;
   text-transform: capitalize;
+  
 }
 `;
 
 const PostDescription = styled.p`
   color: #5f5f5f;
   line-height: 16px;
+  min-height: 65px;
 `;
 
 const PostContent = styled.div`
   padding: 0 16px;
 `;
+
+const IconNumber = styled.span`
+  padding: 0 8px;
+`
 
 
 const Post = ({idea}) => {
@@ -56,17 +75,22 @@ const Post = ({idea}) => {
       </PostContent>
       <CardActions>
         <IconButton aria-label="add to favorites" size="small">
-          {idea.stars.length}
+          <IconNumber>{idea.stars.length}</IconNumber>
           <Favorite />
         </IconButton>
         <IconButton aria-label="share" size="small">
           <Share />
         </IconButton>
         <IconButton aria-label="share" size="small" onClick={() => setCommentsOpen(!commentsOpen)}>
-          {idea.comments.length}
+          <IconNumber>{idea.comments.length}</IconNumber>
           <Comment color={commentsOpen ? 'primary' : 'inherit'}/>
         </IconButton>
       </CardActions>
+      <Collapse in={commentsOpen} timeout="auto" unmountOnExit>
+        <PostContent>
+          <CommentsSection comments={idea.comments}/>
+        </PostContent>
+      </Collapse>
     </PostWrapper>
   );
 };

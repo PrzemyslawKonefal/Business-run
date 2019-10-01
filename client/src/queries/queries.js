@@ -31,7 +31,9 @@ const getPostsQuery = gql`
                 imgUrl
             }
             comments {
+                id
                 content
+                responseId
                 author {
                     id
                     name
