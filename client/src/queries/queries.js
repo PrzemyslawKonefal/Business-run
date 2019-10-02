@@ -78,4 +78,13 @@ const getBookQuery = gql`
     }
 `;
 
-export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery, getPostsQuery };
+const login = gql`
+    mutation Login($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
+            userId,
+            token
+        }
+    }
+`;
+
+export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery, getPostsQuery, login };

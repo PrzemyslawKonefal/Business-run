@@ -4,9 +4,12 @@ const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+const isAuth = require('./middlewares/is-auth');
+
 const app = express();
 
 // allow cross-origin requests
+app.use(isAuth);
 app.use(cors());
 
 // connect to mlab database

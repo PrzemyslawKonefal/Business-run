@@ -4,6 +4,7 @@ const moment = require('moment');
 const Author = require('../models/Author');
 const Idea = require('../models/Idea');
 const Comment = require('../models/Comment');
+const AuthResolvers = require('../resolvers/auth');
 
 const {
     GraphQLObjectType,
@@ -97,6 +98,24 @@ const CommentType = new GraphQLObjectType({
     })
 });
 
+const UserType = new GraphQLObjectType({
+    name: 'User',
+    fields: () => ({
+        _id: { type: GraphQLID },
+        email: { type: GraphQLString },
+        password: { type: GraphQLString }
+    })
+});
+
+const AuthDataType = new GraphQLObjectType({
+    name: 'AuthData',
+    fields: () => ({
+        userId: { type: GraphQLID },
+        token: { type: GraphQLString },
+        tokenExpiration: { type: GraphQLInt },
+    })
+});
+
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -128,7 +147,7 @@ const RootQuery = new GraphQLObjectType({
                 if (args.category) filters.category = args.category;
                 return Idea.find(filters);
             }
-        },
+        }
     }
 });
 
@@ -159,15 +178,17 @@ const Mutation = new GraphQLObjectType({
             args: {
                 title: { type: new GraphQLNonNull(GraphQLString) },
                 description: { type: new GraphQLNonNull(GraphQLString) },
-                authorId: { type: new GraphQLNonNull(GraphQLID) },
                 category: { type: new GraphQLNonNull(GraphQLString) }
             },
-            resolve(parent, args){
+            resolve(parent, args, req){
+                if (!req.isAuth) {
+                    throw new Error('Unauthorised');
+                }
                 const timestamp = moment().format('YYYY-MM-DD, h:mm');
                 const idea = new Idea({
                     title: args.title,
                     description: args.description,
-                    authorId: args.authorId,
+                    authorId: req.userId,
                     category: args.category,
                     comments: [],
                     starsUserIds: [],
@@ -181,15 +202,17 @@ const Mutation = new GraphQLObjectType({
             type: CommentType,
             args: {
                 content: { type: GraphQLString },
-                authorId: { type: GraphQLID },
                 postId: { type: GraphQLID },
                 responseId: {type: GraphQLID },
             },
-            resolve(parent, args){
+            resolve(parent, args, req){
+                if (!req.isAuth) {
+                    throw new Error('Unauthorised');
+                }
                 const timestamp = moment().format('YYYY-MM-DD, h:mm');
                 const comment = new Comment({
                     content: args.content,
-                    authorId: args.authorId,
+                    authorId: req.userId,
                     postId: args.postId,
                     responseId: args.responseId,
                     starsAuthorIds: [],
@@ -205,14 +228,33 @@ const Mutation = new GraphQLObjectType({
                 authorId: { type: new GraphQLNonNull(GraphQLID) },
                 ideaId: { type: new GraphQLNonNull(GraphQLID) },
             },
-            resolve(parent, args) {
+            resolve(parent, args, req) {
+                if (!req.isAuth) {
+                    throw new Error('Unauthorised');
+                }
                 Idea.findById(args.ideaId).exec().then(({starsUserIds}) => {
-                    let starsList = starsUserIds.some(id => id === args.authorId)
-                        ? starsUserIds.filter(id => id !== args.authorId)
-                        : [ ...starsUserIds, args.authorId ];
+                    let starsList = starsUserIds.some(id => id === req.userId)
+                        ? starsUserIds.filter(id => id !== req.userId)
+                        : [ ...starsUserIds, req.userId ];
                     return Idea.findByIdAndUpdate(args.ideaId, { starsUserIds: starsList }, { useFindAndModify: false })
                 });
             }
+        },
+        createUser: {
+            type: UserType,
+            args: {
+                email: { type: new GraphQLNonNull(GraphQLString) },
+                password: { type: new GraphQLNonNull(GraphQLString) }
+            },
+            resolve: AuthResolvers.createUser
+        },
+        login: {
+            type: AuthDataType,
+            args: {
+                email: { type: GraphQLString },
+                password: { type: GraphQLString },
+            },
+            resolve: AuthResolvers.login
         }
     }
 });
