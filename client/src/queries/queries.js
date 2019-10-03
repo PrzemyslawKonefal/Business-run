@@ -87,4 +87,18 @@ const login = gql`
     }
 `;
 
-export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery, getPostsQuery, login };
+const getUserData = gql`
+    mutation GetUserData {
+        getUserData {
+            _id,
+            email,
+            name,
+            age,
+            imgUrl,
+            gender,
+            starredPostIds
+        }
+    }
+`
+
+export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery, getPostsQuery, login, getUserData };

@@ -10,7 +10,15 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  name: String,
+  birthDate: String,
+  imgUrl: String,
+  gender: {
+    type: String,
+    enum: ['man', 'woman']
+  },
+  starredPostIds: Array
 });
 
 module.exports = mongoose.model('User', userSchema);

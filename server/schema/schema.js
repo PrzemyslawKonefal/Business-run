@@ -23,7 +23,7 @@ const AuthorType = new GraphQLObjectType({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
         username: { type: GraphQLString },
-        age: { type: GraphQLInt },
+        birthDate: { type: GraphQLString },
         starredPostIds: { type: new GraphQLList(GraphQLString) },
         imgUrl: { type: GraphQLString },
         ideas: {
@@ -103,7 +103,12 @@ const UserType = new GraphQLObjectType({
     fields: () => ({
         _id: { type: GraphQLID },
         email: { type: GraphQLString },
-        password: { type: GraphQLString }
+        password: { type: GraphQLString },
+        name: { type: GraphQLString },
+        birthDate: { type: GraphQLString },
+        imgUrl: { type: GraphQLString },
+        gender: { type: GraphQLString },
+        starredPostIds: { type: new GraphQLList(GraphQLString) }
     })
 });
 
@@ -159,15 +164,15 @@ const Mutation = new GraphQLObjectType({
             args: {
                 name: { type: GraphQLString },
                 username: { type: GraphQLString },
-                age: { type: GraphQLInt },
+                birthDate: { type: GraphQLString },
                 imgUrl: { type: GraphQLString },
             },
             resolve(parent, args){
                 let author = new Author({
                     name: args.name,
                     username: args.username,
-                    age: args.age,
-                    imgUrl: args.age,
+                    birthDate: args.birthDate,
+                    imgUrl: args.imgUrl,
                     starredPostIds: []
                 });
                 return author.save();
@@ -244,7 +249,11 @@ const Mutation = new GraphQLObjectType({
             type: UserType,
             args: {
                 email: { type: new GraphQLNonNull(GraphQLString) },
-                password: { type: new GraphQLNonNull(GraphQLString) }
+                password: { type: new GraphQLNonNull(GraphQLString) },
+                name: { type: GraphQLString },
+                birthDate: { type: GraphQLString },
+                imgUrl: { type: GraphQLString },
+                gender: { type: GraphQLString },
             },
             resolve: AuthResolvers.createUser
         },
@@ -255,6 +264,10 @@ const Mutation = new GraphQLObjectType({
                 password: { type: GraphQLString },
             },
             resolve: AuthResolvers.login
+        },
+        getUserData: {
+            type: UserType,
+            resolve: AuthResolvers.userData
         }
     }
 });

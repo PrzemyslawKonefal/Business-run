@@ -10,19 +10,24 @@ module.exports = {
     try {
       const existingUser = await User.findOne({ email: args.email });
       if (existingUser) {
-        throw new Error('User exists already.');
+        throw new Error('Użytkownik o podanym emailu już istnieje.');
       }
       if (!EMAIL_REGEX.test(args.email)) {
-        throw new Error('email is invalid.');
+        throw new Error('Struktura emaila jest nieprawidłowa.');
       }
       if (args.password.length < 8) {
-        throw new Error('Password must contain at least 8 characters');
+        throw new Error('Hasło musi zawierać przynajmniej 8 znaków');
       }
       const hashedPassword = await bcrypt.hash(args.password, 12);
 
       const user = new User({
         email: args.email,
-        password: hashedPassword
+        password: hashedPassword,
+        name: args.name,
+        birthDate: args.birthDate,
+        imgUrl: args.imgUrl,
+        gender: args.gender,
+        starredPostIds: []
       });
 
       const result = await user.save();
@@ -32,8 +37,7 @@ module.exports = {
       throw err;
     }
   },
-  login: async (parent, { email, password }, xx) => {
-    console.log(xx.isAuth, xx.userId);
+  login: async (parent, { email, password }) => {
     const user = await User.findOne({ email: email });
     if (!user) {
       throw new Error('User does not exist!');
@@ -54,5 +58,11 @@ module.exports = {
       token: token,
       tokenExpiration: 1
     };
+  },
+  userData: async (parent, args, req) => {
+    if (!req.isAuth || !req.userId) {
+      throw new Error('Authentication failed.')
+    }
+    return User.findById(req.userId);
   }
 };

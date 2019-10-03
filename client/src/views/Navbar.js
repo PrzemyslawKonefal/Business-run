@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
-import { graphql } from 'react-apollo';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { Drawer, Divider, List, ListItem, ListItemText, ListItemIcon, IconButton } from "@material-ui/core";
-import { ChevronRight, ChevronLeft, Inbox, Mail, ExitToApp} from "@material-ui/icons";
-
-import { login } from '../queries/queries'
-import {setCookie} from "../helpers/functions";
+import { ChevronRight, ChevronLeft, ExitToApp} from "@material-ui/icons";
+import { UserDataContext } from "../hoc/Authentication";
 
 const Toolbar = styled.div`
 
@@ -20,16 +17,10 @@ const Nav = styled(Drawer)`
   
 `;
 
-const Navbar = (props) => {
+const Navbar = () => {
   const [navStatus, setNavStatus] = useState(false);
   const handleDrawerToggle = () => { setNavStatus(!navStatus); };
-
-  const handleLogin = () => {
-    props.login({ variables: {
-        email: 'pkonefal@pgs-soft.com',
-        password: 'Fa8a22aC!'
-      }}).then(({ data }) => setCookie('access_token', data.login.token, 7))
-  };
+  const userData = useContext(UserDataContext)
 
   return (
     <Nav
@@ -44,7 +35,7 @@ const Navbar = (props) => {
       </Toolbar>
       <Divider />
       <List>
-          <ListItem button onClick={handleLogin}>
+          <ListItem button>
             <ListItemIcon><ExitToApp/></ListItemIcon>
             <ListItemText primary="Zaloguj" />
           </ListItem>
@@ -53,4 +44,4 @@ const Navbar = (props) => {
   )
 };
 
-export default graphql(login, { name: "login" })(Navbar);
+export default Navbar;
