@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const EMAIL_REGEX = /^\w+([.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
-module.exports = {
+ const authMutations = {
   createUser: async (parent, args) => {
     try {
+      console.log(args)
       const existingUser = await User.findOne({ email: args.email });
       if (existingUser) {
         throw new Error('Użytkownik o podanym emailu już istnieje.');
@@ -25,14 +25,13 @@ module.exports = {
         password: hashedPassword,
         name: args.name,
         birthDate: args.birthDate,
-        imgUrl: args.imgUrl,
+        imgNumber: args.imgNumber,
         gender: args.gender,
         starredPostIds: []
       });
 
-      const result = await user.save();
-
-      return { ...result._doc, password: null, _id: result.id };
+      await user.save();
+      return true;
     } catch (err) {
       throw err;
     }
@@ -66,3 +65,5 @@ module.exports = {
     return User.findById(req.userId);
   }
 };
+
+module.exports = authMutations;

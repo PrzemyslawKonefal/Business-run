@@ -13,10 +13,10 @@ const userSchema = new Schema({
   },
   name: String,
   birthDate: String,
-  imgUrl: String,
+  imgNumber: Number,
   gender: {
     type: String,
-    enum: ['man', 'woman']
+    enum: ['male', 'female']
   },
   starredPostIds: Array
 });

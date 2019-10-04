@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { graphql } from 'react-apollo';
 import lodash from 'lodash';
 import styled from 'styled-components';

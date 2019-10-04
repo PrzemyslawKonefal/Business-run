@@ -8,6 +8,7 @@ import {UserDataContext} from "../hoc/Authentication";
 
 const FormWrap = styled(Card)`
   flex: 1;
+  margin-right: 1em;
   &:focus-within {
     box-shadow: 3px 3px 10px #000;
   }
@@ -16,9 +17,7 @@ const FormWrap = styled(Card)`
 const SignInForm = () => {
   const { handleLogin } = React.useContext(UserDataContext);
   const onSubmit = (values) => {
-    if (values.email && values.password) {
-       handleLogin({...values})
-    }
+     handleLogin({...values})
   };
   return (
     <FormWrap>
@@ -37,7 +36,7 @@ const SignInForm = () => {
                       name="email"
                       label="email"
                       type="email"
-                      helperText={meta.touched && input.value.length && meta.error}
+                      helperText={meta.touched && input.value.length > 0 && meta.error}
                       margin="normal"
                       variant="outlined"
                     />

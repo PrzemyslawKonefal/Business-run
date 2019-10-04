@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import lodash from "lodash";
 import {graphql} from "react-apollo";
 import {getUserData, login} from "../queries/queries";
-import {setCookie, getCookie} from "../utils/functions";
+import {setCookie, getCookie, eraseCookie} from "../utils/functions";
 
 export const UserDataContext = React.createContext({});
 
@@ -23,6 +23,10 @@ const Authentication = (props) => {
       handleGettingUserData()
     })
   };
+  const handleLogout = () => {
+    eraseCookie('access_token');
+    setUserData({});
+  };
   const handleGettingUserData = () => {
     props.getUserData().then(({data}) => {
       setUserData(data.getUserData);
@@ -30,7 +34,7 @@ const Authentication = (props) => {
   };
 
   return (
-    <UserDataContext.Provider value={{content: userData, handleLogin}}>
+    <UserDataContext.Provider value={{content: userData, handleLogin, handleLogout}}>
       {props.children}
     </UserDataContext.Provider>
   );

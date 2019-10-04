@@ -14,6 +14,7 @@ const {
     GraphQLInt,
     GraphQLList,
     GraphQLNonNull,
+    GraphQLBoolean
 } = graphql;
 
 
@@ -106,7 +107,7 @@ const UserType = new GraphQLObjectType({
         password: { type: GraphQLString },
         name: { type: GraphQLString },
         birthDate: { type: GraphQLString },
-        imgUrl: { type: GraphQLString },
+        imgNumber: { type: GraphQLInt },
         gender: { type: GraphQLString },
         starredPostIds: { type: new GraphQLList(GraphQLString) }
     })
@@ -246,13 +247,13 @@ const Mutation = new GraphQLObjectType({
             }
         },
         createUser: {
-            type: UserType,
+            type: GraphQLBoolean,
             args: {
                 email: { type: new GraphQLNonNull(GraphQLString) },
                 password: { type: new GraphQLNonNull(GraphQLString) },
                 name: { type: GraphQLString },
                 birthDate: { type: GraphQLString },
-                imgUrl: { type: GraphQLString },
+                imgNumber: { type: GraphQLInt },
                 gender: { type: GraphQLString },
             },
             resolve: AuthResolvers.createUser

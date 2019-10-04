@@ -5,6 +5,7 @@ import { MuiThemeProvider } from '@material-ui/core';
 import {BrowserRouter, Route} from 'react-router-dom';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import DateFnsUtils from "@date-io/date-fns";
+import styled from 'styled-components';
 
 import Books from "./views/Books";
 import LandingPage from "./views/LandingPage";
@@ -29,6 +30,12 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
+const RoutesWrapper = styled.main`
+  width: 100vw;
+  padding: 0.5em 70px 0.5em 0.5em;
+  box-sizing: border-box;
+`;
+
 
 const App = () => {
     return (
@@ -38,9 +45,11 @@ const App = () => {
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <Authentication>
                 <Navbar />
-                <Route exact path='/' component={LandingPage}/>
-                <Route exact path='/books' component={Books}/>
-                <Route exact path='/login' component={LoginPage}/>
+                <RoutesWrapper>
+                  <Route exact path='/' component={LandingPage}/>
+                  <Route exact path='/books' component={Books}/>
+                  <Route exact path='/login' component={LoginPage}/>
+                </RoutesWrapper>
               </Authentication>
             </MuiPickersUtilsProvider>
           </MuiThemeProvider>

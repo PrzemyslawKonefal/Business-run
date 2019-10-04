@@ -5,9 +5,8 @@ import { UserDataContext } from "../hoc/Authentication";
 import SignInForm from '../components/SignInForm';
 import SignUpForm from '../components/SignUpForm';
 
-const Main = styled.main`
+const Main = styled.div`
   display: flex;
-  padding: 1em;
 `;
 
 const LoginPage = (props) => {

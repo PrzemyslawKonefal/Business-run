@@ -93,12 +93,18 @@ const getUserData = gql`
             _id,
             email,
             name,
-            age,
-            imgUrl,
+            birthDate,
+            imgNumber,
             gender,
             starredPostIds
         }
     }
+`;
+
+const createUser = gql`
+    mutation CreateUser($email: String!, $password: String!, $name: String!, $birthDate: String!, $imgNumber: Int!, $gender: String!) {
+        createUser(email: $email, password: $password, name: $name, birthDate: $birthDate, gender: $gender, imgNumber: $imgNumber)
+    }
 `
 
-export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery, getPostsQuery, login, getUserData };
+export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery, getPostsQuery, login, getUserData, createUser };

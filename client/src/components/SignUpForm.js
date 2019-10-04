@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -16,6 +16,10 @@ import { DatePicker } from "@material-ui/pickers";
 import styled from 'styled-components';
 import { Form, Field } from 'react-final-form'
 import { validateSignUp } from "../utils/formValidations";
+import UserAvatar from "./UserAvatar";
+import { createUser } from "../queries/queries";
+import { graphql } from 'react-apollo';
+import {UserDataContext} from "../hoc/Authentication";
 
 const FormWrap = styled(Card)`
   flex: 2;
@@ -52,12 +56,24 @@ const DateSelector = styled(DatePicker)`
   }
 `;
 
+const AvatarSelector = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 
-const SignUpForm = () => {
+
+const SignUpForm = (props) => {
+  const [ avatarNumber, setAvatarNumber ] = useState(1);
+  const { handleLogin } = useContext(UserDataContext);
   const onSubmit = (values) => {
-    if (values.email && values.password) {
-      console.log({...values})
-    }
+    props.createUser({ variables: {
+        ...values,
+        imgNumber: avatarNumber
+      }}).then(({data}) => {
+        if (data.createUser) {
+          handleLogin({email: values.email, password: values.password})
+        }
+      })
   };
   return (
     <FormWrap>
@@ -66,8 +82,8 @@ const SignUpForm = () => {
         <Form
           onSubmit={onSubmit}
           validate={validateSignUp}
-          initialValues={{birthDate: new Date()}}
-          render={({handleSubmit, invalid}) => (
+          initialValues={{birthDate: new Date(), gender: 'female'}}
+          render={({handleSubmit, invalid, values}) => (
             <InnerForm onSubmit={handleSubmit}>
               <Field name="email">
                 {
@@ -136,21 +152,33 @@ const SignUpForm = () => {
                 </Field>
               </InlineInputsGroup>
               <InlineInputsGroup>
-                <Field name="birthDate" type="radio">
+                <Field name="gender" type="radio">
                   {
-                    ({input, meta}) => (
-                      <FormControl component="fieldset">
-                        <FormLabel component="legend">Gender</FormLabel>
-                        <RadioGroup {...input} aria-label="gender" name="gender">
-                          <FormControlLabel value="female" control={<Radio />} label="Female" color="primary" />
-                          <FormControlLabel value="male" control={<Radio />} label="Male" color="primary" />
+                    ({input}) => (
+                      <FormControl>
+                        <FormLabel>Gender</FormLabel>
+                        <RadioGroup {...input} aria-label="gender" name="gender" >
+                          <FormControlLabel value="female" control={<Radio color="primary"/>} label="Female"  />
+                          <FormControlLabel value="male" control={<Radio color="primary"/>} label="Male"  />
                         </RadioGroup>
                       </FormControl>
                     )
                   }
                 </Field>
+                <AvatarSelector>
+                  {
+                    [1, 2, 3, 4].map(position => (
+                      <UserAvatar
+                        key={position}
+                        type={`${values.gender}-${position}`}
+                        active={avatarNumber === position}
+                        onClick={() => { setAvatarNumber(position);}}
+                      />
+                    ))
+                  }
+                </AvatarSelector>
               </InlineInputsGroup>
-              <Button type="submit" disabled={invalid}>
+              <Button type="submit" disabled={invalid} variant="contained" color="primary">
                 Zarejestruj
               </Button>
             </InnerForm>
@@ -161,4 +189,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default graphql(createUser, { name: 'createUser'} )(SignUpForm);
