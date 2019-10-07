@@ -1,13 +1,13 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
-const User = require('../models/user');
+const User = mongoose.model('User');
 
 const EMAIL_REGEX = /^\w+([.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
  const authMutations = {
   createUser: async (parent, args) => {
     try {
-      console.log(args)
       const existingUser = await User.findOne({ email: args.email });
       if (existingUser) {
         throw new Error('Użytkownik o podanym emailu już istnieje.');

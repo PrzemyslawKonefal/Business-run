@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import { ListItem, ListItemAvatar, ListItemText, Avatar, Divider, Button, Collapse } from '@material-ui/core'
 import CommentsSection from "./CommentsSection";
+import UserAvatar from "./UserAvatar";
 
 const CommentFooter = styled.div`
   display: flex;
@@ -34,7 +35,7 @@ const Comment = ({comment, nestedComments}) => {
   const nestedComms = showAnswers && nestedComments.map(answer => (
     <NestedCommentWrapper alignItems="flex-start" key={answer.id}>
       <ListItemAvatar>
-        <NestedCommentAvatar alt={answer.author.name} src={answer.author.imgUrl} />
+        <UserAvatar small type={`${comment.author.gender}-${comment.author.imgNumber}`} />
       </ListItemAvatar>
       <ListItemText secondary={answer.content} />
     </NestedCommentWrapper>
@@ -43,7 +44,7 @@ const Comment = ({comment, nestedComments}) => {
     <React.Fragment>
       <ListItem alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar alt={comment.author.name} src={comment.author.imgUrl} />
+          <UserAvatar small type={`${comment.author.gender}-${comment.author.imgNumber}`} />
         </ListItemAvatar>
         <ListItemText secondary={comment.content} />
       </ListItem>

@@ -15,20 +15,21 @@ const Avatar = styled.div`
 `;
 
 const AvatarWrapper = styled.div`
-  width: 55px;
-  height: 55px;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: ${(props) => props.active ? '1px 1px 10px #F58C49' : '1px 1px 5px rgba(0, 0, 0, 0.4)'};
+  overflow: hidden;
+  width: ${(props) => props.small ? '50px' : '55px'};
+  height: ${(props) => props.small ? '50px' : '55px'};
+  border-radius: ${(props) => props.small ? '25px' : '8px'};
+  background: ${(props) => props.small ? 'none' : '#fff'};
+  box-shadow: ${(props) => props.small ? 'none' : props.active ? '1px 1px 10px #F58C49' : '1px 1px 5px rgba(0, 0, 0, 0.4)'};
   transition: box-shadow .3s ease-out;
   
   &:hover {
     cursor: pointer;
-    box-shadow: 1px 1px 5px #F58C49;
+    box-shadow: ${(props) => props.small ? 'none' :'1px 1px 5px #F58C49'};
   }
 `;
 
-const UserAvatar = ({type, active, onClick}) => {
+const UserAvatar = ({type, active, onClick, small}) => {
   const avatarConfig =  (() => {
     switch (type) {
       case 'female-1': return { position: '0 0', width: '37px' };
@@ -43,7 +44,7 @@ const UserAvatar = ({type, active, onClick}) => {
     }
   })();
   return (
-    <AvatarWrapper rounded active={active} onClick={onClick}>
+    <AvatarWrapper small={small} active={active} onClick={onClick}>
       <Avatar config={avatarConfig}/>
     </AvatarWrapper>
 

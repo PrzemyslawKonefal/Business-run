@@ -1,8 +1,8 @@
 const graphql = require('graphql');
 const mongoose = require('mongoose');
 const moment = require('moment');
-const Author = require('../models/Author');
 const Idea = require('../models/Idea');
+const User = require('../models/User');
 const Comment = require('../models/Comment');
 const AuthResolvers = require('../resolvers/auth');
 
@@ -17,31 +17,6 @@ const {
     GraphQLBoolean
 } = graphql;
 
-
-const AuthorType = new GraphQLObjectType({
-    name: 'Author',
-    fields: ( ) => ({
-        id: { type: GraphQLID },
-        name: { type: GraphQLString },
-        username: { type: GraphQLString },
-        birthDate: { type: GraphQLString },
-        starredPostIds: { type: new GraphQLList(GraphQLString) },
-        imgUrl: { type: GraphQLString },
-        ideas: {
-            type: new GraphQLList(IdeaType),
-            resolve(parent) {
-                return Idea.find({authorId: parent.id})
-            }
-        },
-        comments: {
-            type: new GraphQLList(CommentType),
-            resolve(parent) {
-                return Comment.find({authorId: parent.id})
-            }
-        }
-    })
-});
-
 const IdeaType = new GraphQLObjectType({
     name: 'Idea',
     fields: ( ) => ({
@@ -54,9 +29,9 @@ const IdeaType = new GraphQLObjectType({
         creationDate: { type: GraphQLString },
         lastUpdateDate: { type: GraphQLString },
         author: {
-            type: AuthorType,
+            type: UserType,
             resolve(parent) {
-                return Author.findById(parent.authorId)
+                return User.findById(parent.authorId)
             }
         },
         comments: {
@@ -66,10 +41,10 @@ const IdeaType = new GraphQLObjectType({
             }
         },
         stars: {
-            type: new GraphQLList(AuthorType),
+            type: new GraphQLList(UserType),
             resolve(parent) {
                 const idsList = parent.starsUserIds.map(id => mongoose.Types.ObjectId(id));
-                return Author.find({
+                return User.find({
                     '_id': {
                         $in: idsList
                     }
@@ -91,9 +66,9 @@ const CommentType = new GraphQLObjectType({
         lastUpdateDate: { type: GraphQLString },
         starsAuthorIds: {type: new GraphQLList(GraphQLString)},
         author: {
-            type: AuthorType,
+            type: UserType,
             resolve(parent){
-                return Author.findById(parent.authorId);
+                return User.findById(parent.authorId);
             }
         }
     })
@@ -125,25 +100,12 @@ const AuthDataType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        author: {
-            type: AuthorType,
-            args: { id: { type: GraphQLID } },
-            resolve(parent, args){
-                return Author.findById(args.id);
-            }
-        },
         idea: {
           type: IdeaType,
           args: { id: { type: GraphQLID } },
           resolve(parent, args){
               return Idea.findById(args.id);
           }
-        },
-        authors: {
-            type: new GraphQLList(AuthorType),
-            resolve(){
-                return Author.find({});
-            }
         },
         ideas: {
             type: new GraphQLList(IdeaType),
@@ -160,25 +122,6 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-        addAuthor: {
-            type: AuthorType,
-            args: {
-                name: { type: GraphQLString },
-                username: { type: GraphQLString },
-                birthDate: { type: GraphQLString },
-                imgUrl: { type: GraphQLString },
-            },
-            resolve(parent, args){
-                let author = new Author({
-                    name: args.name,
-                    username: args.username,
-                    birthDate: args.birthDate,
-                    imgUrl: args.imgUrl,
-                    starredPostIds: []
-                });
-                return author.save();
-            }
-        },
         addIdea: {
             type: IdeaType,
             args: {
@@ -196,7 +139,6 @@ const Mutation = new GraphQLObjectType({
                     description: args.description,
                     authorId: req.userId,
                     category: args.category,
-                    comments: [],
                     starsUserIds: [],
                     creationDate: timestamp,
                     lastUpdateDate: timestamp

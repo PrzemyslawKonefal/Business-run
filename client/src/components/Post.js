@@ -5,12 +5,13 @@ import {NavLink} from 'react-router-dom';
 import Dotdotdot from 'react-dotdotdot'
 import {Favorite, Share, Comment} from '@material-ui/icons'
 import CommentsSection from './CommentsSection'
+import UserAvatar from "./UserAvatar";
 
 const PostWrapper = styled(Card)`
   && {
-    z-index: 5;
     position: relative;
     max-width: 375px;
+    min-width: 300px;
     margin: 0 1em 1em 0;
     &:nth-of-type(3n) {
       margin-right: 0;
@@ -62,7 +63,7 @@ const Post = ({idea}) => {
     <PostWrapper>
       <CategoryChip label={idea.category} color="primary"/>
       <CardHeader
-        avatar={<NavLink to={`/users/${idea.author.id}`}><Avatar src={idea.author.imgUrl} title={idea.author.name}> {idea.author.name[0]} </Avatar></NavLink>}
+        avatar={<NavLink to={`/users/${idea.author._id}`}><UserAvatar type={`${idea.author.gender}-${idea.author.imgNumber}`} small/></NavLink>}
         title={idea.title}
       >
       </CardHeader>
@@ -88,7 +89,7 @@ const Post = ({idea}) => {
       </CardActions>
       <Collapse in={commentsOpen} timeout="auto" unmountOnExit>
         <PostContent>
-          <CommentsSection comments={idea.comments}/>
+          <CommentsSection comments={idea.comments} ideaId={idea.id}/>
         </PostContent>
       </Collapse>
     </PostWrapper>

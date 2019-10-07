@@ -4,7 +4,7 @@ import {graphql} from "react-apollo";
 import {getUserData, login} from "../queries/queries";
 import {setCookie, getCookie, eraseCookie} from "../utils/functions";
 
-export const UserDataContext = React.createContext({});
+export const UserDataContext = React.createContext({ content: {}});
 
 const Authentication = (props) => {
   const [userData, setUserData] = useState({});

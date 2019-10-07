@@ -7,7 +7,6 @@ import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import DateFnsUtils from "@date-io/date-fns";
 import styled from 'styled-components';
 
-import Books from "./views/Books";
 import LandingPage from "./views/LandingPage";
 import Navbar from "./views/Navbar";
 import LoginPage from "./views/LoginPage";
@@ -47,7 +46,6 @@ const App = () => {
                 <Navbar />
                 <RoutesWrapper>
                   <Route exact path='/' component={LandingPage}/>
-                  <Route exact path='/books' component={Books}/>
                   <Route exact path='/login' component={LoginPage}/>
                 </RoutesWrapper>
               </Authentication>

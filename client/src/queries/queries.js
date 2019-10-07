@@ -1,23 +1,5 @@
 import { gql } from 'apollo-boost';
 
-const getAuthorsQuery = gql`
-    {
-        authors {
-            name
-            id
-        }
-    }
-`;
-
-const getBooksQuery = gql`
-    {
-        books {
-            name
-            id
-        }
-    }
-`;
-
 const getPostsQuery = gql`
     {
         ideas {
@@ -26,54 +8,28 @@ const getPostsQuery = gql`
             description
             category
             author {
-                id
+                _id
                 name
-                imgUrl
+                imgNumber
+                gender
             }
             comments {
                 id
                 content
                 responseId
                 author {
-                    id
+                    _id
                     name
-                    imgUrl
+                    imgNumber
+                    gender
                 }
             }
             stars {
-                id
+                _id
                 name
             }
             creationDate
             lastUpdateDate
-        }
-    }
-`;
-
-const addBookMutation = gql`
-    mutation AddBook($name: String!, $genre: String!, $authorId: ID!){
-        addBook(name: $name, genre: $genre, authorId: $authorId){
-            name
-            id
-        }
-    }
-`;
-
-const getBookQuery = gql`
-    query GetBook($id: ID){
-        book(id: $id) {
-            id
-            name
-            genre
-            author {
-                id
-                name
-                age
-                books {
-                    name
-                    id
-                }
-            }
         }
     }
 `;
@@ -107,4 +63,27 @@ const createUser = gql`
     }
 `
 
-export { getAuthorsQuery, getBooksQuery, addBookMutation, getBookQuery, getPostsQuery, login, getUserData, createUser };
+const addComment = gql`
+  mutation AddComment($content: String!, $postId: ID!, $responseId: ID) {
+      addComment(content: $content, postId: $postId, responseId: $responseId) {
+          postId
+      }
+  }
+`;
+
+const addIdea = gql`
+    mutation AddIdea($title: String!, $description: String!, $category: String!) {
+        addIdea(title: $title, description: $description, category: $category) {
+            id
+            title
+            description
+            authorId
+            category
+            starsUserIds
+            creationDate
+            lastUpdateDate
+        }
+    }
+`
+
+export { getPostsQuery, login, getUserData, createUser, addComment, addIdea };

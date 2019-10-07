@@ -7,7 +7,7 @@ const cors = require('cors');
 const isAuth = require('./middlewares/is-auth');
 
 const app = express();
-
+require('./models/User');
 // allow cross-origin requests
 app.use(isAuth);
 app.use(cors());
