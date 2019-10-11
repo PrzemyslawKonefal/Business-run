@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import { ListItem, ListItemAvatar, ListItemText, Avatar, Divider, Button, Collapse } from '@material-ui/core'
-import CommentsSection from "./CommentsSection";
+import { ListItem, ListItemAvatar, ListItemText, Divider, Button, Collapse } from '@material-ui/core';
 import UserAvatar from "./UserAvatar";
+import CommentOperations from "./CommentOperations";
 
 const CommentFooter = styled.div`
   display: flex;
@@ -13,15 +13,13 @@ const ToggleAnswersButton = styled(Button)`
   font-size: 12px;
 `;
 
-const NestedCommentWrapper = styled(ListItem)`
+const CommentBody = styled(ListItem)`
+  position: relative;
+`
+
+const NestedCommentWrapper = styled(CommentBody)`
   && {
     margin-left: 25px;
-  }
-`;
-const NestedCommentAvatar = styled(Avatar)`
-  && {
-    width: 30px;
-    height: 30px;
   }
 `;
 
@@ -35,19 +33,22 @@ const Comment = ({comment, nestedComments}) => {
   const nestedComms = showAnswers && nestedComments.map(answer => (
     <NestedCommentWrapper alignItems="flex-start" key={answer.id}>
       <ListItemAvatar>
-        <UserAvatar small type={`${comment.author.gender}-${comment.author.imgNumber}`} />
+        <UserAvatar small type={`${answer.author.gender}-${answer.author.imgNumber}`} />
       </ListItemAvatar>
       <ListItemText secondary={answer.content} />
     </NestedCommentWrapper>
-  ))
+  ));
+
+
   return (
     <React.Fragment>
-      <ListItem alignItems="flex-start">
+      <CommentBody alignItems="flex-start">
         <ListItemAvatar>
           <UserAvatar small type={`${comment.author.gender}-${comment.author.imgNumber}`} />
         </ListItemAvatar>
         <ListItemText secondary={comment.content} />
-      </ListItem>
+        <CommentOperations comment={comment}/>
+      </CommentBody>
       <CommentFooter>
         {toggleAnswersButton}
       </CommentFooter>

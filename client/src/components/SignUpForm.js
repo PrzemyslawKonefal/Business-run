@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -15,6 +15,7 @@ import { PersonAdd } from "@material-ui/icons";
 import { DatePicker } from "@material-ui/pickers";
 import styled from 'styled-components';
 import { Form, Field } from 'react-final-form'
+import { FORM_ERROR } from "final-form";
 import { validateSignUp } from "../utils/formValidations";
 import UserAvatar from "./UserAvatar";
 import { createUser } from "../queries/queries";
@@ -60,21 +61,20 @@ const AvatarSelector = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-
+const avatarsArray = [1, 2, 3, 4];
 
 const SignUpForm = (props) => {
-  const [ avatarNumber, setAvatarNumber ] = useState(1);
   const { handleLogin } = useContext(UserDataContext);
+
   const onSubmit = (values) => {
-    props.createUser({ variables: {
-        ...values,
-        imgNumber: avatarNumber
-      }}).then(({data}) => {
+    props.createUser({ variables: values })
+      .then(({data}) => {
         if (data.createUser) {
           handleLogin({email: values.email, password: values.password})
         }
       })
   };
+
   return (
     <FormWrap>
       <Header title="Utwórz nowe konto" avatar={<PersonAdd/>}/>
@@ -82,9 +82,10 @@ const SignUpForm = (props) => {
         <Form
           onSubmit={onSubmit}
           validate={validateSignUp}
-          initialValues={{birthDate: new Date(), gender: 'female'}}
-          render={({handleSubmit, invalid, values}) => (
+          initialValues={{birthDate: new Date(), gender: 'female', imgNumber: 1}}
+          render={({handleSubmit, invalid, values, form, submitting, submitError }) => (
             <InnerForm onSubmit={handleSubmit}>
+              {submitError}
               <Field name="email">
                 {
                   ({input, meta}) => (
@@ -92,7 +93,7 @@ const SignUpForm = (props) => {
                       {...input}
                       error={meta.error && meta.touched && input.value.length > 0}
                       name="email"
-                      label="Email *"
+                      label="Email"
                       type="email"
                       helperText={meta.touched && input.value.length > 0 && meta.error}
                       margin="normal"
@@ -108,7 +109,7 @@ const SignUpForm = (props) => {
                       {...input}
                       error={meta.error && meta.touched}
                       name="password"
-                      label="Password *"
+                      label="Password"
                       type="password"
                       helperText={meta.touched && meta.error}
                       margin="normal"
@@ -165,20 +166,26 @@ const SignUpForm = (props) => {
                     )
                   }
                 </Field>
-                <AvatarSelector>
+                <Field name="imgNumber">
                   {
-                    [1, 2, 3, 4].map(position => (
-                      <UserAvatar
-                        key={position}
-                        type={`${values.gender}-${position}`}
-                        active={avatarNumber === position}
-                        onClick={() => { setAvatarNumber(position);}}
-                      />
-                    ))
+                    ({input}) => (
+                      <AvatarSelector>
+                        {
+                          avatarsArray.map(position => (
+                            <UserAvatar
+                              key={position}
+                              type={`${values.gender}-${position}`}
+                              active={input.value === position}
+                              onClick={() => form.change('imgNumber', position)}
+                            />
+                          ))
+                        }
+                      </AvatarSelector>
+                    )
                   }
-                </AvatarSelector>
+                </Field>
               </InlineInputsGroup>
-              <Button type="submit" disabled={invalid} variant="contained" color="primary">
+              <Button type="submit" disabled={submitting} variant="contained" color="primary" size="small" fullWidth={false}>
                 Zarejestruj
               </Button>
             </InnerForm>

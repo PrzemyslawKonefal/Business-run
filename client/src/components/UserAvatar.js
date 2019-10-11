@@ -16,8 +16,8 @@ const Avatar = styled.div`
 
 const AvatarWrapper = styled.div`
   overflow: hidden;
-  width: ${(props) => props.small ? '50px' : '55px'};
-  height: ${(props) => props.small ? '50px' : '55px'};
+  width: ${(props) => props.small ? '45px' : '55px'};
+  height: ${(props) => props.small ? '45px' : '55px'};
   border-radius: ${(props) => props.small ? '25px' : '8px'};
   background: ${(props) => props.small ? 'none' : '#fff'};
   box-shadow: ${(props) => props.small ? 'none' : props.active ? '1px 1px 10px #F58C49' : '1px 1px 5px rgba(0, 0, 0, 0.4)'};

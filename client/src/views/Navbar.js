@@ -57,9 +57,9 @@ const Navbar = () => {
   );
 
   const userHeader = content.name && (
-    <Link to="/profile">
+    <Link to={`/profile/${content._id}`}>
       <ListItem button>
-        <ListItemIcon><UserAvatar type={`${content.gender}-${content.imgNumber}`}/></ListItemIcon>
+        <ListItemIcon><UserAvatar type={`${content.gender}-${content.imgNumber}`} small/></ListItemIcon>
         <ListItemText primary={content.name.split(' ')[0]}/>
       </ListItem>
     </Link>
@@ -67,8 +67,7 @@ const Navbar = () => {
 
   const logOutButton = content._id && (
     <ListItem button onClick={handleLogout}>
-      <ListItemIcon><ExitToApp/></ListItemIcon>
-      <ListItemText primary="Wyloguj"/>
+      <ListItemText primary="Wyloguj" inset/>
     </ListItem>
   );
 

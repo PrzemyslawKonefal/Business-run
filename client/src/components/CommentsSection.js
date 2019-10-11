@@ -46,7 +46,6 @@ const CommentsSection  = ({comments, addComment, ideaId}) => {
 
   return(
       <section>
-        <Divider variant="middle" />
           <CommentsWrapper>
               { computeComments() }
           </CommentsWrapper>

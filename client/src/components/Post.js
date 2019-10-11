@@ -32,7 +32,6 @@ const PostWrapper = styled(Card)`
 const CategoryChip = styled(Chip)`
 && {
   position: absolute;
-  z-index: -1;
   top: 0;
   right: 0;
   height: 20px;
