@@ -31,7 +31,7 @@ const client = new ApolloClient({
 
 const RoutesWrapper = styled.main`
   width: 100vw;
-  padding: 0.5em 70px 0.5em 0.5em;
+  padding: 0.5em 190px 0.5em 0.5em;
   box-sizing: border-box;
 `;
 

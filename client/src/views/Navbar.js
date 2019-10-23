@@ -9,7 +9,7 @@ import {
   ListItemIcon,
   IconButton,
 } from "@material-ui/core";
-import {ChevronRight, ChevronLeft, ExitToApp, PostAdd} from "@material-ui/icons";
+import { ExitToApp, PostAdd} from "@material-ui/icons";
 import {UserDataContext} from "../hoc/Authentication";
 import {NavLink} from "react-router-dom";
 import UserAvatar from "../components/UserAvatar";
@@ -35,11 +35,7 @@ const Link = styled(NavLink)`
 `
 
 const Navbar = () => {
-  const [navStatus, setNavStatus] = useState(false);
   const [addIdeaModal, setAddIdeaModal] = useState(false);
-  const handleDrawerToggle = () => {
-    setNavStatus(!navStatus);
-  };
   const {content, handleLogout} = useContext(UserDataContext);
 
   const handleIdeaSubmit = (data) => {
@@ -81,15 +77,9 @@ const Navbar = () => {
   return (
     <Nav
       variant="permanent"
-      open={navStatus}
+      open={true}
       anchor="right"
     >
-      <Toolbar>
-        <IconButton onClick={handleDrawerToggle}>
-          {navStatus ? <ChevronRight/> : <ChevronLeft/>}
-        </IconButton>
-      </Toolbar>
-      <Divider/>
       <List>
         {loginLink}
         {userHeader}
