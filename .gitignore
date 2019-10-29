@@ -58,5 +58,5 @@ typings/
 .env
 
 /.idea/
-/client/
+/client/yarn.lock
 /server/yarn.lock
