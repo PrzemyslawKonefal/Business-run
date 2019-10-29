@@ -61,7 +61,7 @@ const createUser = gql`
     mutation CreateUser($email: String!, $password: String!, $name: String!, $birthDate: String!, $imgNumber: Int!, $gender: String!) {
         createUser(email: $email, password: $password, name: $name, birthDate: $birthDate, gender: $gender, imgNumber: $imgNumber)
     }
-`
+`;
 
 const addComment = gql`
   mutation AddComment($content: String!, $postId: ID!, $responseId: ID) {
@@ -84,6 +84,8 @@ const addIdea = gql`
             lastUpdateDate
         }
     }
-`
+`;
 
-export { getPostsQuery, login, getUserData, createUser, addComment, addIdea };
+export {
+  getPostsQuery, login, getUserData, createUser, addComment, addIdea,
+};

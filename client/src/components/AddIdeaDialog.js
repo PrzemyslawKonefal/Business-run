@@ -2,7 +2,7 @@ import React, {useReducer, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { graphql} from 'react-apollo';
 
-import { addIdea } from "../queries/queries";
+import {addIdea, getPostsQuery} from "../queries/queries";
 import {
   Button,
   Dialog,
@@ -18,6 +18,7 @@ import {
 } from "@material-ui/core";
 
 import {CATEGORY_TYPES} from "../utils/constants";
+import lodash from "lodash";
 
 const SelectItem = styled(MenuItem)`
   text-transform: capitalize;
@@ -89,7 +90,10 @@ const AddIdeaDialog = ({open, onClose, onSubmit, addIdea}) => {
     if (emptyField) {
       setError(`Pole ${emptyField[0]} Nie może być puste`)
     } else {
-      addIdea({variables: formState}).then(onSubmit)
+      addIdea({
+        variables: formState,
+        refetchQueries: [{ query: getPostsQuery }]
+      }).then(onSubmit)
     }
   };
 
@@ -155,4 +159,6 @@ const AddIdeaDialog = ({open, onClose, onSubmit, addIdea}) => {
   );
 };
 
-export default graphql(addIdea, { name: 'addIdea' })(AddIdeaDialog);
+export default lodash.flowRight(
+  graphql(addIdea, { name: 'addIdea' }),
+)(AddIdeaDialog);

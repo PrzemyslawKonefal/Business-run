@@ -10,17 +10,17 @@ import {
   Radio,
   FormControl,
   CardHeader,
-} from "@material-ui/core";
-import { PersonAdd } from "@material-ui/icons";
-import { DatePicker } from "@material-ui/pickers";
+} from '@material-ui/core';
+import { PersonAdd } from '@material-ui/icons';
+import { DatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
-import { Form, Field } from 'react-final-form'
-import { FORM_ERROR } from "final-form";
-import { validateSignUp } from "../utils/formValidations";
-import UserAvatar from "./UserAvatar";
-import { createUser } from "../queries/queries";
+import { Form, Field } from 'react-final-form';
+import { FORM_ERROR } from 'final-form';
 import { graphql } from 'react-apollo';
-import {UserDataContext} from "../hoc/Authentication";
+import { validateSignUp } from '../utils/formValidations';
+import UserAvatar from './UserAvatar';
+import { createUser } from '../queries/queries';
+import { UserDataContext } from '../hoc/Authentication';
 
 const FormWrap = styled(Card)`
   flex: 2;
@@ -45,7 +45,7 @@ const Header = styled(CardHeader)`
     font-size: 2em;
     }
   }
-`
+`;
 const InlineInputsGroup = styled.div`
   display: flex;
   justify-content: space-between;
@@ -61,6 +61,13 @@ const AvatarSelector = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
+const PrimaryButton = styled(Button)`
+  && {
+    max-width: 200px;
+  }
+`;
+
 const avatarsArray = [1, 2, 3, 4];
 
 const SignUpForm = (props) => {
@@ -68,27 +75,29 @@ const SignUpForm = (props) => {
 
   const onSubmit = (values) => {
     props.createUser({ variables: values })
-      .then(({data}) => {
+      .then(({ data }) => {
         if (data.createUser) {
-          handleLogin({email: values.email, password: values.password})
+          handleLogin({ email: values.email, password: values.password });
         }
-      })
+      });
   };
 
   return (
     <FormWrap>
-      <Header title="Utwórz nowe konto" avatar={<PersonAdd/>}/>
+      <Header title="Utwórz nowe konto" avatar={<PersonAdd />} />
       <CardContent>
         <Form
           onSubmit={onSubmit}
           validate={validateSignUp}
-          initialValues={{birthDate: new Date(), gender: 'female', imgNumber: 1}}
-          render={({handleSubmit, invalid, values, form, submitting, submitError }) => (
+          initialValues={{ birthDate: new Date(), gender: 'female', imgNumber: 1 }}
+          render={({
+            handleSubmit, invalid, values, form, submitting, submitError,
+          }) => (
             <InnerForm onSubmit={handleSubmit}>
               {submitError}
               <Field name="email">
                 {
-                  ({input, meta}) => (
+                  ({ input, meta }) => (
                     <TextField
                       {...input}
                       error={meta.error && meta.touched && input.value.length > 0}
@@ -104,7 +113,7 @@ const SignUpForm = (props) => {
               </Field>
               <Field name="password">
                 {
-                  ({input, meta}) => (
+                  ({ input, meta }) => (
                     <TextField
                       {...input}
                       error={meta.error && meta.touched}
@@ -121,7 +130,7 @@ const SignUpForm = (props) => {
               <InlineInputsGroup>
                 <Field name="name">
                   {
-                    ({input, meta}) => (
+                    ({ input, meta }) => (
                       <TextField
                         {...input}
                         error={meta.error && meta.touched}
@@ -137,12 +146,12 @@ const SignUpForm = (props) => {
                 </Field>
                 <Field name="birthDate">
                   {
-                    ({input, meta}) => (
+                    ({ input, meta }) => (
                       <DateSelector
                         {...input}
                         name="birthDate"
                         label="Birth Date"
-                        format={"dd/MM/yyyy"}
+                        format="dd/MM/yyyy"
                         inputVariant="outlined"
                         maxDate={new Date()}
                         minDate={new Date(1910, 1, 1)}
@@ -155,12 +164,12 @@ const SignUpForm = (props) => {
               <InlineInputsGroup>
                 <Field name="gender" type="radio">
                   {
-                    ({input}) => (
+                    ({ input }) => (
                       <FormControl>
                         <FormLabel>Gender</FormLabel>
-                        <RadioGroup {...input} aria-label="gender" name="gender" >
-                          <FormControlLabel value="female" control={<Radio color="primary"/>} label="Female"  />
-                          <FormControlLabel value="male" control={<Radio color="primary"/>} label="Male"  />
+                        <RadioGroup {...input} aria-label="gender" name="gender">
+                          <FormControlLabel value="female" control={<Radio color="primary" />} label="Female" />
+                          <FormControlLabel value="male" control={<Radio color="primary" />} label="Male" />
                         </RadioGroup>
                       </FormControl>
                     )
@@ -168,10 +177,10 @@ const SignUpForm = (props) => {
                 </Field>
                 <Field name="imgNumber">
                   {
-                    ({input}) => (
+                    ({ input }) => (
                       <AvatarSelector>
                         {
-                          avatarsArray.map(position => (
+                          avatarsArray.map((position) => (
                             <UserAvatar
                               key={position}
                               type={`${values.gender}-${position}`}
@@ -185,9 +194,9 @@ const SignUpForm = (props) => {
                   }
                 </Field>
               </InlineInputsGroup>
-              <Button type="submit" disabled={submitting} variant="contained" color="primary" size="small" fullWidth={false}>
+              <PrimaryButton type="submit" disabled={submitting} variant="contained" color="primary" size="small" fullWidth={false}>
                 Zarejestruj
-              </Button>
+              </PrimaryButton>
             </InnerForm>
           )}
         />
@@ -196,4 +205,4 @@ const SignUpForm = (props) => {
   );
 };
 
-export default graphql(createUser, { name: 'createUser'} )(SignUpForm);
+export default graphql(createUser, { name: 'createUser' })(SignUpForm);

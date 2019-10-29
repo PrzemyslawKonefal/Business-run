@@ -2,22 +2,16 @@ import React, {useState, useContext} from 'react';
 import styled from 'styled-components';
 import {
   Drawer,
-  Divider,
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
-  IconButton,
 } from "@material-ui/core";
 import { ExitToApp, PostAdd} from "@material-ui/icons";
 import {UserDataContext} from "../hoc/Authentication";
 import {NavLink} from "react-router-dom";
 import UserAvatar from "../components/UserAvatar";
 import AddIdeaDialog from "../components/AddIdeaDialog";
-
-const Toolbar = styled.div`
-
-`;
 
 const Nav = styled(Drawer)`
   & > div {

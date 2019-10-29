@@ -1,10 +1,13 @@
 import React from 'react';
-import { Card, CardContent, TextField, Button } from "@material-ui/core";
+import {
+  Card, CardContent, TextField, Button, CardHeader,
+} from '@material-ui/core';
 import styled from 'styled-components';
-import { Form, Field } from 'react-final-form'
-import { validateSignIn } from "../utils/formValidations";
+import { Form, Field } from 'react-final-form';
+import { validateSignIn } from '../utils/formValidations';
 
-import {UserDataContext} from "../hoc/Authentication";
+import { UserDataContext } from '../hoc/Authentication';
+import {PersonAdd} from "@material-ui/icons";
 
 const FormWrap = styled(Card)`
   flex: 1;
@@ -14,22 +17,52 @@ const FormWrap = styled(Card)`
   }
 `;
 
+const PrimaryButton = styled(Button)`
+  && {
+    max-width: 200px;
+    width: 200px;
+    
+    margin-top: 16px;
+  }
+`;
+
+const FormStyled = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const Header = styled(CardHeader)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  & > div {
+    flex: none;
+    
+    svg {
+    font-size: 2em;
+    }
+  }
+`;
+
 const SignInForm = () => {
   const { handleLogin } = React.useContext(UserDataContext);
   const onSubmit = (values) => {
-     handleLogin({...values})
+    handleLogin({ ...values });
   };
   return (
     <FormWrap>
+      <Header title="Zaloguj" avatar={<PersonAdd />} />
       <CardContent>
         <Form
           onSubmit={onSubmit}
           validate={validateSignIn}
-          render={({ handleSubmit, invalid}) => (
-            <form onSubmit={handleSubmit}>
+          render={({ handleSubmit, invalid }) => (
+            <FormStyled onSubmit={handleSubmit}>
               <Field name="email">
                 {
-                  ({input, meta}) => (
+                  ({ input, meta }) => (
                     <TextField
                       {...input}
                       error={meta.error && meta.touched && input.value.length > 0}
@@ -45,7 +78,7 @@ const SignInForm = () => {
               </Field>
               <Field name="password">
                 {
-                  ({input, meta}) => (
+                  ({ input, meta }) => (
                     <TextField
                       {...input}
                       error={meta.error && meta.touched}
@@ -59,11 +92,11 @@ const SignInForm = () => {
                   )
                 }
               </Field>
-              <Button type="submit" disabled={invalid}>
+              <PrimaryButton type="submit" disabled={invalid} variant="contained" color="primary" size="small">
                 Zaloguj
-              </Button>
-            </form>
-        )}
+              </PrimaryButton>
+            </FormStyled>
+          )}
         />
       </CardContent>
     </FormWrap>
