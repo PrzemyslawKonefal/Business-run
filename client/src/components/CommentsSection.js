@@ -5,7 +5,7 @@ import Comment from './Comment';
 
 import CommentInput from './CommentInput';
 import { UserDataContext } from '../hoc/Authentication';
-import { addComment as addCommentQuery, getPostsQuery } from '../queries/queries';
+import { addComment as addCommentQuery, getPostsQuery } from '../queries';
 
 const CommentsWrapper = styled.div`
   display: flex;

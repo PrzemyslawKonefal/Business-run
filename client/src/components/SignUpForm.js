@@ -15,11 +15,10 @@ import { PersonAdd } from '@material-ui/icons';
 import { DatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
 import { Form, Field } from 'react-final-form';
-import { FORM_ERROR } from 'final-form';
 import { graphql } from 'react-apollo';
 import { validateSignUp } from '../utils/formValidations';
 import UserAvatar from './UserAvatar';
-import { createUser } from '../queries/queries';
+import { createUser } from '../queries';
 import { UserDataContext } from '../hoc/Authentication';
 
 const FormWrap = styled(Card)`

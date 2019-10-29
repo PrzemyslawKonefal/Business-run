@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import {Card, CardHeader, CardActions, Collapse, Avatar, Chip, IconButton} from '@material-ui/core'
+import {Card, CardHeader, CardActions, Collapse, Chip, IconButton} from '@material-ui/core'
 import {NavLink} from 'react-router-dom';
 import Dotdotdot from 'react-dotdotdot'
 import {Favorite, Share, Comment} from '@material-ui/icons'

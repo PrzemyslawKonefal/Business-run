@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import lodash from "lodash";
 import {graphql} from "react-apollo";
-import {getUserData, login} from "../queries/queries";
+import {getUserData, login} from "../queries";
 import {setCookie, getCookie, eraseCookie} from "../utils/functions";
 
 export const UserDataContext = React.createContext({ content: {}});

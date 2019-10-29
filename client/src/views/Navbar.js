@@ -31,12 +31,6 @@ const Link = styled(NavLink)`
 const Navbar = () => {
   const [addIdeaModal, setAddIdeaModal] = useState(false);
   const {content, handleLogout} = useContext(UserDataContext);
-
-  const handleIdeaSubmit = (data) => {
-    console.log(data);
-    setAddIdeaModal(false);
-  }
-
   const loginLink = !content._id && (
     <Link to="/login">
       <ListItem button>
@@ -80,7 +74,7 @@ const Navbar = () => {
         {addIdea}
         {logOutButton}
       </List>
-      <AddIdeaDialog open={addIdeaModal} onClose={() => setAddIdeaModal(false)} onSubmit={handleIdeaSubmit}/>
+      <AddIdeaDialog open={addIdeaModal} onClose={() => setAddIdeaModal(false)} onSubmit={() => setAddIdeaModal(false)}/>
     </Nav>
   )
 };

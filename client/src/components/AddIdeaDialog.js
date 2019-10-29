@@ -2,7 +2,6 @@ import React, {useReducer, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { graphql} from 'react-apollo';
 
-import {addIdea, getPostsQuery} from "../queries/queries";
 import {
   Button,
   Dialog,
@@ -16,9 +15,9 @@ import {
   FormControl,
   InputLabel
 } from "@material-ui/core";
+import {addIdea, getPostsQuery} from "../queries";
 
 import {CATEGORY_TYPES} from "../utils/constants";
-import lodash from "lodash";
 
 const SelectItem = styled(MenuItem)`
   text-transform: capitalize;
@@ -57,6 +56,7 @@ const initialState = {
   description: '',
   category: ''
 };
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'setValue':
@@ -71,7 +71,7 @@ const reducer = (state, action) => {
   }
 };
 
-const AddIdeaDialog = ({open, onClose, onSubmit, addIdea}) => {
+const AddIdeaDialog = ({open, onClose, addPost}) => {
   const [formState, dispatch] = useReducer(reducer, initialState);
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -90,10 +90,7 @@ const AddIdeaDialog = ({open, onClose, onSubmit, addIdea}) => {
     if (emptyField) {
       setError(`Pole ${emptyField[0]} Nie może być puste`)
     } else {
-      addIdea({
-        variables: formState,
-        refetchQueries: [{ query: getPostsQuery }]
-      }).then(onSubmit)
+      onClose();
     }
   };
 
@@ -159,6 +156,4 @@ const AddIdeaDialog = ({open, onClose, onSubmit, addIdea}) => {
   );
 };
 
-export default lodash.flowRight(
-  graphql(addIdea, { name: 'addIdea' }),
-)(AddIdeaDialog);
+export default graphql(addIdea, { name: 'addPost' })(AddIdeaDialog);
